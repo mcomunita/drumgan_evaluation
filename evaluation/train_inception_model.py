@@ -29,6 +29,8 @@ from evaluation.inception_network import SpectrogramInception3
 
 from pprint import pprint
 
+import math
+
 
 def train_inception_model(name: str, path: str, labels: list, config: str, batch_size: int=50, n_epoch=100):
 
@@ -41,26 +43,26 @@ def train_inception_model(name: str, path: str, labels: list, config: str, batch
     config = read_json(config)
 
     loader_config = config['loader_config']
-    print("-- TRAIN INCEPTION MODEL: loader_config --")
-    print(loader_config)
-    print()
+    # print("-- TRAIN INCEPTION MODEL: loader_config --")
+    # print(loader_config)
+    # print()
     
     transform_config = config['transform_config']
-    print("-- TRAIN INCEPTION MODEL: transform_config --")
-    print(transform_config)
-    print()
+    # print("-- TRAIN INCEPTION MODEL: transform_config --")
+    # print(transform_config)
+    # print()
     
     transform = transform_config['transform']
     
     dbname = loader_config.pop('dbname')
-    print("-- TRAIN INCEPTION MODEL: dbname --")
-    print(dbname)
-    print()
+    # print("-- TRAIN INCEPTION MODEL: dbname --")
+    # print(dbname)
+    # print()
     
     loader_module = get_data_loader(dbname)
-    print("-- TRAIN INCEPTION MODEL: loader_module --")
-    print(loader_module)
-    print()
+    # print("-- TRAIN INCEPTION MODEL: loader_module --")
+    # print(loader_module)
+    # print()
     
     processor = AudioProcessor(**transform_config)
     
@@ -73,6 +75,9 @@ def train_inception_model(name: str, path: str, labels: list, config: str, batch
 
     val_data, val_labels = loader.get_validation_set()
     val_data = val_data[:, 0:1]
+    # print("-- TRAIN INCEPTION MODEL: val_labels --")
+    # print(val_labels)
+    # print()
 
     # att_dict = loader.header['attributes']
     # att_classes = att_dict.keys()
@@ -85,6 +90,14 @@ def train_inception_model(name: str, path: str, labels: list, config: str, batch
                              num_workers=2)
     
     num_classes = len(set(loader.metadata))
+    tr_data_len = len(loader.data)
+    val_data_len = len(loader.val_data)
+    print("-- TR DATA --")
+    print(len(loader.data))
+    print()
+    print("-- VAL DATA --")
+    print(len(loader.val_data))
+    print()
     print("-- NUM CLASSES --")
     print(num_classes)
     print()
@@ -93,7 +106,10 @@ def train_inception_model(name: str, path: str, labels: list, config: str, batch
 
     inception_model = nn.DataParallel(
             SpectrogramInception3(num_classes, aux_logits=False))
+    # inception_model = SpectrogramInception3(num_classes, aux_logits=False)
     inception_model.to(device)
+    # print('-- TRAIN INCEPTION MODEL: inception_model')
+    # print(inception_model)
 
     optim = torch.optim.Adam(filter(lambda p: p.requires_grad, inception_model.parameters()),
                        betas=[0, 0.99], lr=0.001)
@@ -103,10 +119,13 @@ def train_inception_model(name: str, path: str, labels: list, config: str, batch
     
     epochs = trange(n_epoch, desc='train-loop') 
 
+    vloss_best = math.inf
+
     for i in epochs:
         data_iter = iter(data_loader)
         iter_bar = trange(len(data_iter), desc='epoch-loop')
         inception_model.train()
+        tr_loss = 0
         for j in iter_bar:
             input, labels = data_iter.next()
             # print('-- TRAIN INCEPTION MODEL')
@@ -117,25 +136,29 @@ def train_inception_model(name: str, path: str, labels: list, config: str, batch
 
             # take magnitude
             input = mel(input.float())
+            # print('input = mel(input.float())')
             
             mag_input = F.interpolate(input[:, 0:1], (299, 299))
             optim.zero_grad()
+            # print('optim.zero_grad()')
             
             output = inception_model(mag_input.float())
             # loss = criterion.getCriterion(output, target.to(device))
             loss = criterion(output, labels.to(device))
-
+            # print('loss = criterion(output, labels.to(device))')
+            tr_loss += loss
             loss.backward()
             state_msg = f'Iter: {j}; loss: {loss.item():0.2f} '
             iter_bar.set_description(state_msg)
             optim.step()
+            # print('optim.step()')
 
-        # SAVE CHECK-POINT
-        if i % 10 == 0:
-            if isinstance(inception_model, torch.nn.DataParallel):
-                torch.save(inception_model.module.state_dict(), output_file)
-            else:
-                torch.save(inception_model.state_dict(), output_file)
+        # # SAVE CHECK-POINT
+        # if i % 10 == 0:
+        #     if isinstance(inception_model, torch.nn.DataParallel):
+        #         torch.save(inception_model.module.state_dict(), output_file)
+        #     else:
+        #         torch.save(inception_model.state_dict(), output_file)
 
         # EVALUATION
         with torch.no_grad():
@@ -167,7 +190,6 @@ def train_inception_model(name: str, path: str, labels: list, config: str, batch
             # pred_labels = loader.index_to_labels(y_pred)
             # true_labels = loader.index_to_labels(val_labels)
             # for i, c in enumerate(att_classes):
-                
             #     # if class is xentroopy...
             #     if att_dict[c]['loss'] == 'mse': continue
             #     logging.info(c)
@@ -185,9 +207,18 @@ def train_inception_model(name: str, path: str, labels: list, config: str, batch
             #     crep = classification_report(true, pred, target_names=target_names, labels=target_names)
             #     logging.info(crep)
             #     print(crep)
-            state_msg2 = f'epoch {i}; val_loss: {vloss / val_i: 0.2f}'
+            state_msg2 = f'epoch {i}; tr_loss (scaled x1000): {(tr_loss / tr_data_len)*1000: 0.2f}; val_loss: {(vloss / val_data_len)*1000: 0.2f}'
             logging.info(state_msg2)
             epochs.set_description(state_msg2)
+
+            # SAVE BEST
+            if vloss < vloss_best:
+                vloss_best = vloss
+                if isinstance(inception_model, torch.nn.DataParallel):
+                    torch.save(inception_model.module.state_dict(), output_file)
+                else:
+                    torch.save(inception_model.state_dict(), output_file)
+                logging.info('SAVED BEST')
 
 
 
