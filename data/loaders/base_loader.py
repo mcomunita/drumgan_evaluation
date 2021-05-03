@@ -60,7 +60,7 @@ class DataLoader(ABC, data.Dataset):
         self.load_data()
         # self.dbname = f'{name}_{self.__hash__()}'
         self.dbname = f'{name}'
-        output_path = mkdir_in_path(self.data_path, 'processed')
+        output_path = mkdir_in_path(self.data_path, '_processed')
         self.output_path = mkdir_in_path(os.path.expanduser(output_path), name)
 
         assert os.path.exists(self.data_path), \
