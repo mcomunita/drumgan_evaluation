@@ -37,15 +37,16 @@ while [ "$1" != "" ]; do
 done
 
 # update path to your fad virtual environment
-. "/Users/Marco/Documents/OneDrive - Queen Mary, University of London/PHD/REPOS/_fad/google-research/.venv_fad"
+. "/Users/Marco/Documents/OneDrive - Queen Mary, University of London/PHD/REPOS/_fad/google-research/.venv_fad/bin/activate"
 
 OUTPUT=`realpath "$OUTPUT"`
 REAL=`realpath "$REAL"`
 SYNTH=`realpath "$SYNTH"`
 
-cd "/Users/javier/Developer/google-research"
-python -m "frechet_audio_distance.create_embeddings_main" --input_files "$REAL" --stats "$OUTPUT/real_stats.cvs"
-python -m "frechet_audio_distance.create_embeddings_main" --input_files "$SYNTH" --stats "$OUTPUT/synth_stats.cvs"
+# update path to your google-research repo
+cd "/Users/Marco/Documents/OneDrive - Queen Mary, University of London/PHD/REPOS/_fad/google-research"
+python -m "frechet_audio_distance.create_embeddings_main" --input_files "$REAL" --stats "$OUTPUT/real_stats"
+python -m "frechet_audio_distance.create_embeddings_main" --input_files "$SYNTH" --stats "$OUTPUT/synth_stats"
 
-fad=`python -m "frechet_audio_distance.compute_fad" --background_stats "$OUTPUT/real_stats.cvs" --test_stats "$OUTPUT/synth_stats.cvs"`
+fad=`python -m "frechet_audio_distance.compute_fad" --background_stats "$OUTPUT/real_stats" --test_stats "$OUTPUT/synth_stats"`
 echo "$fad"
