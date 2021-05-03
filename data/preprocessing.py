@@ -41,8 +41,8 @@ class DataProcessor(object):
             @arg
 
         """
-        print('-- DATA PROCESSOR: __init__')
-        print()
+        # print('-- DATA PROCESSOR: __init__')
+        # print()
 
         self.pre_pipeline = []
         self.post_pipeline = []
@@ -60,8 +60,8 @@ class DataProcessor(object):
             # out = list(p.map(processor, tqdm(x, desc='preprocessing-loop')))
             # p.close()
             out = list(processor)
-            print('out:')
-            print(out)
+            # print('out:')
+            # print(out)
             return out
         return self.get_preprocessor()(x)
         # return self.get_postprocessor()
@@ -104,7 +104,7 @@ class AudioProcessor(DataProcessor):
         DataProcessor.__init__(self, transform=transform, **kargs)
 
     def init_transform_pipeline(self, transform):
-        print('-- AUDIO PROCESSOR: init_tranform_pipeline')
+        # print('-- AUDIO PROCESSOR: init_tranform_pipeline')
         """
             Function that initializes the transformation pipeline
 
@@ -126,9 +126,9 @@ class AudioProcessor(DataProcessor):
             "cq_nsgt":   self.build_cqt_nsgt_pipeline,
             "mfcc":      self.build_mfcc_pipeline
         }[self.transform]()
-        print('self.transform:')
-        print(self.transform)
-        print()
+        # print('self.transform:')
+        # print(self.transform)
+        # print()
 
     def build_waveform_pipeline(self):
         self._add_audio_loader()

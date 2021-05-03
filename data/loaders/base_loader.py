@@ -39,19 +39,22 @@ class DataLoader(ABC, data.Dataset):
                  preprocess=True,
                  shuffle=False,
                  **kwargs):
-        print('-- DATALOADER: __init__')
-        print()
+        # print('-- DATALOADER: __init__')
+        # print()
         data.Dataset.__init__(self)
 
         # input args
         self.data_path = data_path
-
         self.criteria = criteria
         self.getitem_processing = getitem_processing
         self.preprocessing = preprocessing
         self.preprocess = preprocess
         self.shuffle = True
         self.postprocessing = postprocessing
+        self.tr_val_split = 0.9
+        if kwargs['tr_val_split']:
+            self.tr_val_split = kwargs['tr_val_split']
+        # print(kwargs)
 
         # data/metadata/header attributes
         self.load_data()
@@ -93,8 +96,8 @@ class DataLoader(ABC, data.Dataset):
             return self.data[index], labels
 
     def init_dataset(self):
-        print('-- DATALOADER: init_dataset')
-        print()
+        # print('-- DATALOADER: init_dataset')
+        # print()
         if self.shuffle:
             self.shuffle_data()
         # preprocess data
@@ -102,11 +105,11 @@ class DataLoader(ABC, data.Dataset):
             # check preprocessing is not None
             assert self.preprocessing != None, "No preprocessing was given!"
             self.preprocess_data()
-        self.train_val_split()
+        self.train_val_split(self.tr_val_split)
 
     def load_from_pt_file(self, path):
-        print('-- DATALOADER: load_from_pt_file')
-        print()
+        # print('-- DATALOADER: load_from_pt_file')
+        # print()
         import joblib
         new_obj = joblib.load(path)
         # new_obj = torch.load(path)
@@ -139,7 +142,7 @@ class DataLoader(ABC, data.Dataset):
         return labels
 
     def preprocess_data(self):
-        print('-- DATALOADER: preprocess_data')
+        # print('-- DATALOADER: preprocess_data')
         print("Preprocessing data...")
         # import multiprocessing
         # import signal
@@ -207,9 +210,9 @@ class DataLoader(ABC, data.Dataset):
         return label_batch
 
     def train_val_split(self, tr_val_split=0.9):
-        print('-- DATALOADER: train_val_split')
-        print(tr_val_split)
-        print()
+        # print('-- DATALOADER: train_val_split')
+        # print(tr_val_split)
+        # print()
         assert len(self.data) > 0, "tr/val split: No loaded data yet"
         if not self.shuffle:
             print("WARNING: splitting train/val data without shuffling!")

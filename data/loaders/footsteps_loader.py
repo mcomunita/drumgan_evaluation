@@ -4,12 +4,12 @@ from ..db_extractors.footsteps_extractor import extract
 
 class FootstepsDataLoader(AudioDataLoader):
     def load_data(self):
-        print('-- FOOSTEPS DATALOADER: load_data')
-        print()
+        # print('-- FOOSTEPS DATALOADER: load_data')
+        # print()
         self.data, self.metadata = \
             extract(self.data_path, self.criteria)
-        print('len(self.data):')
-        print(len(self.data))
-        print('len(self.metadata): ')
-        print(len(self.metadata))
-        print()
+        # print('len(self.data):')
+        # print(len(self.data))
+        # print('len(self.metadata): ')
+        # print(len(self.metadata))
+        # print()
