@@ -42,6 +42,15 @@ def filter_files_in_path(dir_path, format='.wav'):
 def list_files_abs_path(dir_path, format='.wav'):
     return [os.path.join(os.path.abspath(dir_path), x) for x in filter_files_in_path(dir_path, format)]
 
+def list_files_in_subfolders(dir_path, format='.wav'):
+    files = []
+    for folder in sorted(next(os.walk(dir_path))[1]):
+        for file in os.listdir('%s/%s' % (dir_path, folder)):
+            if not(file.startswith(".")) and file.endswith(format):
+                file_path = '%s/%s/%s' % (dir_path, folder, file)
+                files.append(file_path)
+    return files
+
 def filter_keys_in_strings(strings, keys):
     return filter(lambda x: any([k in x for k in keys]), strings)
 
