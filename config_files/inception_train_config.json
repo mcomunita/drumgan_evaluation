@@ -4,9 +4,10 @@
     "output_path": "../output_folder",
     "loader_config": {
         "dbname": "footsteps",
-        "data_path": "../_data/footsteps_real/",
+        "data_path": "_data/footsteps_real/",
         "criteria": {},
-        "shuffle": true
+        "shuffle": true,
+        "tr_val_split": 0.9
     },
     "transform_config": {
         "transform": "stft",

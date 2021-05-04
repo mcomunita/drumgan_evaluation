@@ -285,15 +285,15 @@ class DataLoader(ABC, data.Dataset):
 class AudioDataLoader(DataLoader):
     def __init__(self,
                  _format="wav",
-                 **kargs):
+                 **kwargs):
         assert _format in ['wav', 'mp3'], f"Audio format {_format} not in wav, mp3"
         
-        DataLoader.__init__(self, _format=_format, **kargs)
+        DataLoader.__init__(self, _format=_format, **kwargs)
 
 class SimpleLoader(AudioDataLoader):
-    def __init__(self, **kargs):
+    def __init__(self, **kwargs):
         self.metadata = []
-        AudioDataLoader.__init__(self, **kargs)
+        AudioDataLoader.__init__(self, **kwargs)
 
     def load_data(self):
         self.data, self.header = \
