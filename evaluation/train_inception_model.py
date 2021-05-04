@@ -14,15 +14,17 @@ from os.path import dirname, realpath, join
 from datetime import datetime
 # from gans.ac_criterion import ACGANCriterion
 from sklearn.metrics import confusion_matrix, classification_report
-from utils.utils import read_json
+
 from datetime import datetime
-from evaluation.inception_network import SpectrogramInception3
+
 from pprint import pprint
 
 from drumgan_evaluation.data.preprocessing import AudioProcessor
 from drumgan_evaluation.data.audio_transforms import MelScale
 from drumgan_evaluation.data.loaders import get_data_loader
 from drumgan_evaluation.utils.utils import mkdir_in_path, GPU_is_available
+from drumgan_evaluation.evaluation.inception_network import SpectrogramInception3
+from drumgan_evaluation.utils.utils import read_json
 
 
 def train_inception_model(name: str, path: str, labels: list, config: str, batch_size: int=50, n_epoch=100):

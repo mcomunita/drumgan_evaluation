@@ -3,7 +3,8 @@ import os.path
 import dill
 import torch.utils.data as data
 import torch
-from utils.utils import mkdir_in_path, read_json, filter_keys_in_strings, list_files_abs_path, get_filename
+
+from drumgan_evaluation.utils.utils import mkdir_in_path, read_json, filter_keys_in_strings, list_files_abs_path, get_filename
 from abc import ABC, abstractmethod
 import numpy as np
 

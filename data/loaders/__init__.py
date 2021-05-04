@@ -4,8 +4,8 @@
 # from .youtube_pianos import YouTubePianos
 # from .sinewaves import Sinewaves
 # from .mp3towav_loader import MP3ToWAV
-from .footsteps_loader import FootstepsDataLoader
-from .base_loader import SimpleLoader
+from drumgan_evaluation.data.loaders.footsteps_loader import FootstepsDataLoader
+from drumgan_evaluation.data.loaders.base_loader import SimpleLoader
 
 AVAILABLE_DATASETS = {
 	# 'nsynth': NSynth,

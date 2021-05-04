@@ -5,7 +5,7 @@ import sys
 import pickle
 import requests
 
-from utils.utils import get_date, mkdir_in_path, read_json, list_files_abs_path, get_filename, save_json
+from drumgan_evaluation.utils.utils import get_date, mkdir_in_path, read_json, list_files_abs_path, get_filename, save_json
 from random import shuffle
 from tqdm import trange, tqdm
 

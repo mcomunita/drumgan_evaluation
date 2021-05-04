@@ -1,5 +1,5 @@
-from .base_loader import AudioDataLoader
-from ..db_extractors.footsteps_extractor import extract
+from drumgan_evaluation.data.loaders.base_loader import AudioDataLoader
+from drumgan_evaluation.data.db_extractors.footsteps_extractor import extract
 
 
 class FootstepsDataLoader(AudioDataLoader):

@@ -45,8 +45,8 @@ REAL=`realpath "$REAL"`
 SYNTH=`realpath "$SYNTH"`
 
 # !!!       !!!         !!!
-# update path to your google-research-fad repo
-cd "/Users/Marco/Documents/OneDrive - Queen Mary, University of London/PHD/REPOS/ccwavegan/google-research-fad"
+# update path to your google_research_fad repo
+cd "/Users/Marco/Documents/OneDrive - Queen Mary, University of London/PHD/REPOS/ccwavegan/google_research_fad"
 python -m "frechet_audio_distance.create_embeddings_main" --input_files "$REAL" --stats "$OUTPUT/real_stats"
 python -m "frechet_audio_distance.create_embeddings_main" --input_files "$SYNTH" --stats "$OUTPUT/synth_stats"
 

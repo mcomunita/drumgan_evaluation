@@ -1,4 +1,4 @@
-from utils.utils import get_date
+from drumgan_evaluation.utils.utils import get_date
 import hashlib
 
 
